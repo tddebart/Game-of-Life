@@ -16,9 +16,9 @@ function made2DArray(cols, rows) {
 let grid;
 let cols;
 let rows;
-let resolution = 5;
+let resolution = 10;
 let start = false;
-let water = false;
+let gas = false;
 const neighBoursInd = [[-1,-1], [-1,0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1,1]]
 
 function setup() {
@@ -35,11 +35,11 @@ function setup() {
 
 function next() {
     let next = made2DArray(cols,rows);
+    //let usedCoords = made2DArray(cols,rows)
     for (x = 0; x < cols; x++) {
         for (y = 0; y < rows; y++) {
-            //next[i][j] = grid[i][j]
             if(grid[x][y] === 1) {
-                if(!water) {
+                if(!gas) {
                     let left = isEmpty(x-1,y+1)
                     let right = isEmpty(x+1,y+1)
                     if(left && right) {
@@ -47,17 +47,21 @@ function next() {
                         left  = rand;
                         right = !rand;
                     }
-                    if(isEmpty(x,y+1)) {
+                    if(isEmpty(x,y+1)) { // && usedCoords[x][y+1] !== 1) {
                         next[x][y] = 0;
                         next[x][y+1] = 1
-                    } else if(left) {
+                        //usedCoords[x][y+1] = 1;
+                    } else if(left) { //&& usedCoords[x-1][y+1] !== 1) {
                         next[x][y] = 0;
                         next[x-1][y+1] = 1
-                    } else if (right) {
+                        //usedCoords[x-1][y+1] = 1;
+                    } else if (right) { //&& usedCoords[x+1][y+1] !== 1) {
                         next[x][y] = 0;
                         next[x+1][y+1] = 1
+                        //usedCoords[x+1][y+1] = 1;
                     }  else {
                         next[x][y] = 1;
+                        //usedCoords[x][y] = 1;
                     }
                 } else {
                     let left = isEmpty(x-1,y)
@@ -67,28 +71,23 @@ function next() {
                         left  = rand;
                         right = !rand;
                     }
-                    if(isEmpty(x,y+1)) {
+                    if(isEmpty(x,y+1) && usedCoords[x][y+1] !== 1) {
                         next[x][y] = 0;
                         next[x][y+1] = 1
-                    } else if(left) {
+                        usedCoords[x][y+1] = 1;
+                    } else if(left && usedCoords[x-1][y] !== 1) {
                         next[x][y] = 0;
                         next[x-1][y] = 1
-                    } else if (right) {
+                        usedCoords[x-1][y] = 1;
+                    } else if (right && usedCoords[x+1][y] !== 1) {
                         next[x][y] = 0;
                         next[x+1][y] = 1
+                        usedCoords[x+1][y] = 1;
                     }  else {
                         next[x][y] = 1;
+                        usedCoords[x][y] = 1;
                     }
                 }
-                // if(water) {
-                //     if(isValidCoord(x+1,y) && grid[x+1][y] === 0) {
-                //         next[x][y] = 0;
-                //         next[x+1][y] = 1
-                //     } else if(isValidCoord(x-1,y) && grid[x-1][y] === 0) {
-                //         next[x][y] = 0;
-                //         next[x-1][y] = 1
-                //     }
-                // }
             }
         }
     }
@@ -111,7 +110,9 @@ function draw() {
                 for (i = 1; i < 5; i++) {
                     for (h = 0; h < neighBoursInd.length; h++) {
                         const ind = neighBoursInd[h]
-                        grid[floor(mouseX / resolution) + ind[0]*i][floor(mouseY / resolution) + ind[1]*i] = 1
+                        if(isValidCoord(floor(mouseX / resolution) + ind[0]*i, floor(mouseY / resolution) + ind[1]*i)) {
+                            grid[floor(mouseX / resolution) + ind[0]*i][floor(mouseY / resolution) + ind[1]*i] = 1
+                        }
                     }
                 }
             } else if (mouseButton === RIGHT) {

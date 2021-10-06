@@ -21,9 +21,10 @@ let start = false;
 const neighBoursInd = [[-1,-1], [-1,0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1,1]]
 
 function setup() {
-    createCanvas(600, 600);
+    createCanvas(800, 800);
     cols = width/ resolution;
     rows = height/ resolution;
+    frameRate(10)
 
     grid = made2DArray(cols,rows)
     document.addEventListener('contextmenu', event => event.preventDefault());
