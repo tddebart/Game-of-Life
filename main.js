@@ -36,15 +36,8 @@ function next() {
     let next = made2DArray(cols,rows);
     for (i = 0; i < cols; i++) {
         for (j = 0; j < rows; j++) {
-            let liveNeighbours = 0;
-            for (h = 0; h < neighBoursInd.length; h++) {
-                const ind = neighBoursInd[h]
-                if(isValidCoord(i+ind[0], j+ind[1])) {
-                    if(grid[i+ind[0]][j+ind[1]] === 1) {
-                        liveNeighbours++;
-                    }
-                }
-            }
+            const liveNeighbours = neighBourCount(j,i)
+
             if(grid[i][j] === 1 && liveNeighbours < 2 || liveNeighbours > 3) {
                 next[i][j] = 0;
             } else if(grid[i][j] === 1){
@@ -58,8 +51,20 @@ function next() {
     grid = next;
 }
 
-function isValidCoord(x,y) {
-    return !(x < 0 || y < 0 || x > cols-1 || y > rows-1);
+function neighBourCount(row, column) {
+    let count = 0;
+    for (const delta_row of [rows - 1, 0, 1]) {
+        for (const delta_col of [cols - 1, 0, 1]) {
+            if (delta_row === 0 && delta_col === 0) {
+                continue;
+            }
+
+            let neighbor_col = (column + delta_col) % cols;
+            let neighbor_row = (row + delta_row) % rows;
+            count += grid[neighbor_col][neighbor_row]
+        }
+    }
+    return count;
 }
 
 function draw() {

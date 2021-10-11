@@ -20,6 +20,7 @@ let resolution = 10;
 let start = false;
 let gas = false;
 const neighBoursInd = [[-1,-1], [-1,0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1,1]]
+let pixels = 0;
 
 function setup() {
     createCanvas(800, 800);
@@ -30,11 +31,12 @@ function setup() {
     document.addEventListener('contextmenu', event => event.preventDefault());
     textSize(15);
     textAlign(LEFT,TOP);
-    document.getElementById('resolution').textContent = width/resolution + " | " + height/resolution + " | " + (width/resolution)*(height/resolution)
+    document.getElementById('resolution').textContent = width/resolution + " | " + height/resolution + " | " + (width/resolution)*(height/resolution) + " | " + pixels
 }
 
 function next() {
     let next = made2DArray(cols,rows);
+    let pix = 0;
     //let usedCoords = made2DArray(cols,rows)
     for (x = 0; x < cols; x++) {
         for (y = 0; y < rows; y++) {
@@ -50,18 +52,18 @@ function next() {
                     if(isEmpty(x,y+1)) { // && usedCoords[x][y+1] !== 1) {
                         next[x][y] = 0;
                         next[x][y+1] = 1
-                        //usedCoords[x][y+1] = 1;
+                        pix++;
                     } else if(left) { //&& usedCoords[x-1][y+1] !== 1) {
                         next[x][y] = 0;
                         next[x-1][y+1] = 1
-                        //usedCoords[x-1][y+1] = 1;
+                        pix++
                     } else if (right) { //&& usedCoords[x+1][y+1] !== 1) {
                         next[x][y] = 0;
                         next[x+1][y+1] = 1
-                        //usedCoords[x+1][y+1] = 1;
+                        pix++
                     }  else {
                         next[x][y] = 1;
-                        //usedCoords[x][y] = 1;
+                        pix++
                     }
                 } else {
                     let left = isEmpty(x-1,y)
@@ -75,23 +77,28 @@ function next() {
                         next[x][y] = 0;
                         next[x][y+1] = 1
                         usedCoords[x][y+1] = 1;
+                        pix++
                     } else if(left && usedCoords[x-1][y] !== 1) {
                         next[x][y] = 0;
                         next[x-1][y] = 1
                         usedCoords[x-1][y] = 1;
+                        pix++
                     } else if (right && usedCoords[x+1][y] !== 1) {
                         next[x][y] = 0;
                         next[x+1][y] = 1
                         usedCoords[x+1][y] = 1;
+                        pix++
                     }  else {
                         next[x][y] = 1;
                         usedCoords[x][y] = 1;
+                        pix++
                     }
                 }
             }
         }
     }
     grid = next;
+    pixels = pix;
 }
 
 function isEmpty(x,y) {
@@ -104,6 +111,7 @@ function isValidCoord(x,y) {
 }
 
 function draw() {
+    document.getElementById('resolution').textContent = width/resolution + " | " + height/resolution + " | " + (width/resolution)*(height/resolution) + " | " + pixels
     if(mouseIsPressed) {
         if(grid.length >= floor(mouseX/resolution) && grid[floor(mouseX/resolution)] !== undefined && grid[floor(mouseX/resolution)].length >= floor(mouseY/resolution)) {
             if(mouseButton === LEFT) {
